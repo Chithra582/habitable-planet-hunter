@@ -1,116 +1,103 @@
-# Explainability & Transparency Report: Habitable Planet Hunter Agent
+# EXPLAINABILITY — Habitable Planet Hunter Agent
 
-This report details the algorithmic decision boundaries, data handling protocols, failure modes, and governance controls implemented within Habitable Planet Hunter Agent, in compliance with OpenGAP 0.1.0 specifications and FAIR scientific data standards.
-
----
-
-## 1. System Overview & Scientific Architecture
-
-Habitable Planet Hunter Agent operates an autonomous scientific machine learning pipeline designed to evaluate the habitability potential of confirmed exoplanets from the Planetary Habitability Laboratory (PHL) catalog.
-
-```
-+-----------------------------------------------------------------------+
-|                PHL Exoplanet Catalog (Full Dataset)                   |
-+-----------------------------------------------------------------------+
-                                   |
-                                   v
-+-----------------------------------------------------------------------+
-|         1. Feature Sanitization & Leakage Prevention Gate             |
-|   - Strips forbidden proxies: P_TEMP_EQUIL, P_ESI, P_HABZONE, P_FLUX  |
-|   - Isolates approved pool of 30 physical/orbital/stellar parameters  |
-+-----------------------------------------------------------------------+
-                                   |
-                                   v
-+-----------------------------------------------------------------------+
-|         2. Physics-Aware Astrophysical Imputation Engine              |
-|   - Host star spectral grouping (M, K, G, F, A)                       |
-|   - Planetary mass-radius empirical relationship preservation         |
-+-----------------------------------------------------------------------+
-                                   |
-                                   v
-+-----------------------------------------------------------------------+
-|         3. Calibrated Habitability Classification Engine              |
-|   - Multi-class (0: Non-Hab, 1: Conservative, 2: Optimistic)          |
-|   - Luminosity-to-Distance ratio dynamics ($L / d^2$)                 |
-+-----------------------------------------------------------------------+
-                                   |
-                                   v
-+-----------------------------------------------------------------------+
-|         4. Scientific Provenance & Uncertainty Audit Dossier          |
-|   - Confidence intervals, feature attribution, and validation metrics |
-+-----------------------------------------------------------------------+
-```
+> **Admissibility & Transparency Report for OpenGAP / Agent Passport**  
+> *Agent Name:* Habitable Planet Hunter Agent (`habitable-planet-hunter-agent`)  
+> *Specification:* OpenGAP v0.1.0  
+> *Domain:* Data & Analytics / Astrophysical Machine Learning & Exoplanet Habitability  
 
 ---
 
-## 2. Algorithmic Decision Framework
+## 1. Overview & Scientific Purpose
 
-### 2.1 Feature Sanitization and Proxy Leakage Prevention
-- **Decision:** The agent screens all incoming training matrices and inference vectors, rejecting direct mathematical proxies of temperature or habitability to ensure genuine physical learning.
+Habitable Planet Hunter Agent is an autonomous scientific machine learning intelligence, astrophysical feature validator, and catalog imputation pipeline built for exoplanetary exploration. The underlying system operates across astronomical observation records from the **Planetary Habitability Laboratory (PHL) Exoplanet Catalog**, analyzing confirmed exoplanets discovered by Kepler, K2, TESS, and ground-based radial velocity observatories.
+
+The agent's primary scientific purpose is to accurately classify the potential habitability of exoplanets (`P_HABITABLE`: non-habitable, conservatively habitable, or optimistically habitable) strictly from fundamental planetary and host star physical properties. By systematically preventing data leakage from synthetic habitability proxies (such as equilibrium temperature `P_TEMP_EQUIL`, Earth Similarity Index `P_ESI`, or pre-computed habitable zone flags `P_HABZONE`), the agent ensures machine learning models learn authentic astrophysical relationships between stellar luminosity, orbital dynamics, and planetary bulk density.
+
+---
+
+## 2. How the Agent Decides (Decision-Making Logic)
+
+Habitable Planet Hunter Agent operates across a deterministic, multi-stage scientific decision pipeline that grounds every prediction in verified physical observables:
+
+```
+[PHL Astronomical Catalog Data] ──> [Anti-Leakage & Feature Boundary Gate] ──> [Physics-Aware Imputation]
+                                                                                       │
+                                                                                       ▼
+[Calibrated Prediction & Uncertainty Dossier] <── [Scientific Provenance Audit] <── [Ensemble ML Classifier]
+```
+
+### 2.1 Feature Sanitization & Leakage Prevention
+- **Decision:** Determines whether incoming datasets comply with the approved 30-feature pool and purges all synthetic habitability proxies.
 - **Rules:**
-  - Forbidden columns (`P_TEMP_EQUIL`, `P_ESI`, `P_HABZONE_OPT`, `P_HABZONE_CON`, `P_FLUX`) trigger immediate pipeline halting or automatic column dropping.
-  - Column inclusion is restricted to the 30 approved physical parameters: 6 planetary physical properties, 9 orbital parameters, 11 stellar host properties, and 4 system metadata dimensions.
-  - Feature selection reports must demonstrate that model predictions do not correlate perfectly with any single column ($r < 0.85$).
+  - Automatically identifies and strips forbidden proxy predictors: `P_TEMP_EQUIL` (Equilibrium Temperature), `P_ESI` (Earth Similarity Index), `P_HABZONE_OPT` / `P_HABZONE_CON` (Habitable Zone flags), and `P_FLUX` (Insolation Flux).
+  - Restricts feature input space strictly to the approved 30 physical observables: 6 planetary physical properties, 9 orbital parameters, 11 stellar host properties, and 4 system metadata dimensions.
+  - Rejects incoming training batches if any engineered feature exhibits an artificial cross-correlation ($r \ge 0.85$) with forbidden proxy metrics.
 
 ### 2.2 Astrophysical Stellar Flux & Habitable Zone Dynamic Inference
-- **Decision:** The agent computes relative stellar insolation dynamically from primary physical observables rather than reading pre-calculated flux fields.
+- **Decision:** Evaluates relative stellar insolation and planetary thermal boundaries directly from primary physical parameters.
 - **Rules:**
-  - Insolation scaling is derived via $S_{\text{eff}} \propto \frac{S_{\text{LUMINOSITY}}}{P_{\text{SEMI\_MAJOR\_AXIS}}^2}$.
-  - Planets with orbital eccentricity $e > 0.2$ are subjected to periastron and apastron flux boundary checks: $r_{\text{peri}} = a(1 - e)$, $r_{\text{ap}} = a(1 + e)$.
-  - Planets orbiting tidal lock boundary stars ($P_{\text{SEMI\_MAJOR\_AXIS}} \le S_{\text{TIDAL\_LOCK}}$) receive specialized atmospheric retention flags.
+  - Calculates relative stellar flux dynamically using the inverse-square law: $S_{\text{eff}} \propto \frac{S_{\text{LUMINOSITY}}}{P_{\text{SEMI\_MAJOR\_AXIS}}^2}$.
+  - Computes periastron and apastron insolation limits for eccentric orbits ($e > 0.2$): $r_{\text{peri}} = a(1 - e)$, $r_{\text{ap}} = a(1 + e)$.
+  - Flags planets orbiting inside the host star's tidal locking radius ($P_{\text{SEMI\_MAJOR\_AXIS}} \le S_{\text{TIDAL\_LOCK}}$) for specialized atmospheric circulation checks.
 
 ### 2.3 Multi-Class & Binary Habitability Classification Boundaries
-- **Decision:** The agent maps exoplanetary candidates into habitability regimes: Class 0 (Non-Habitable), Class 1 (Conservatively Habitable), and Class 2 (Optimistically Habitable).
+- **Decision:** Maps exoplanetary candidates into distinct habitability regimes based on physical planetary characteristics and stellar environments.
 - **Rules:**
-  - Class 1 (Conservative): Terrestrial radius ($0.5 R_\oplus \le P_{\text{RADIUS}} \le 1.6 R_\oplus$), terrestrial mass ($0.1 M_\oplus \le P_{\text{MASS}} \le 5.0 M_\oplus$), and host star stellar flux within the conservative runaway greenhouse / maximum greenhouse limits.
-  - Class 2 (Optimistic): Super-Earth regime ($1.6 R_\oplus < P_{\text{RADIUS}} \le 2.5 R_\oplus$) or candidates situated in early Mars / recent Venus empirical boundary zones.
-  - Class 0 (Non-Habitable): Gas giants, sub-Neptunes ($P_{\text{RADIUS}} > 2.5 R_\oplus$), extreme surface gravities ($P_{\text{GRAVITY}} > 3.0 g_\oplus$), or tidally disrupted systems.
+  - **Class 1 (Conservatively Habitable):** Terrestrial radius ($0.5 R_\oplus \le P_{\text{RADIUS}} \le 1.6 R_\oplus$), terrestrial mass ($0.1 M_\oplus \le P_{\text{MASS}} \le 5.0 M_\oplus$), and dynamic stellar flux within empirical runaway greenhouse / maximum greenhouse limits.
+  - **Class 2 (Optimistically Habitable):** Super-Earth radius regime ($1.6 R_\oplus < P_{\text{RADIUS}} \le 2.5 R_\oplus$) or candidates situated in early Mars / recent Venus boundary zones.
+  - **Class 0 (Non-Habitable):** Gas giants, sub-Neptunes ($P_{\text{RADIUS}} > 2.5 R_\oplus$), extreme surface gravity ($P_{\text{GRAVITY}} > 3.0 g_\oplus$), or tidally disrupted systems.
 
 ### 2.4 Domain-Aware Astrophysical Imputation
-- **Decision:** Missing astronomical measurements are imputed using domain-specific astronomical heuristics rather than naive global means.
+- **Decision:** Imputes missing astronomical catalog measurements using astrophysics-grounded heuristics rather than global statistical means.
 - **Rules:**
-  - Missing stellar parameters ($S_{\text{LUMINOSITY}}, S_{\text{TEMPERATURE}}$) are imputed grouped by stellar spectral classification ($S_{\text{TYPE}}$).
-  - Missing planetary masses or radii are estimated using empirical mass-radius power-law relations: $M \propto R^{3.45}$ for rocky regimes, $M \propto R^{2.06}$ for volatile-rich regimes.
-  - Imputation uncertainty flags are injected into the metadata dossier for downstream sensitivity analysis.
+  - Imputes missing stellar parameters ($S_{\text{LUMINOSITY}}, S_{\text{TEMPERATURE}}$) grouped by host star spectral classification ($S_{\text{TYPE}}$: M, K, G, F, A).
+  - Estimates missing planetary masses or radii using empirical power-law relations: $M \propto R^{3.45}$ for rocky terrestrial planets, $M \propto R^{2.06}$ for volatile-rich envelopes.
+  - Records transformation provenance and imputation uncertainty flags into the catalog audit metadata.
 
 ---
 
-## 3. Data Handling, Provenance & Privacy
+## 3. Data Sources & Inputs Used
 
-The agent processes astrophysical survey data and observational parameters under FAIR data principles.
+| Data Input | Source | Purpose | Data Handling & Privacy |
+|---|---|---|---|
+| **PHL Exoplanet Catalog** | Planetary Habitability Laboratory / Kaggle | Providing physical and orbital parameters for confirmed exoplanets | Public scientific dataset; processed in-memory; immutable catalog versioning |
+| **Approved 30 Physical Features** | NASA Exoplanet Archive / Gaia DR3 | Training and evaluating machine learning habitability classifiers | Restricted feature pool; zero synthetic proxy contamination; normalized arrays |
+| **Ground-Truth Habitability Labels** | PHL Scientific Benchmarks (`P_HABITABLE`) | Providing target classes (0: Non-Hab, 1: Conservative, 2: Optimistic) | Ground-truth labels preserved without synthetic modification or label leakage |
+| **Model Weights & Ensembles** | Scikit-Learn / XGBoost / LightGBM | Executing calibrated habitability classification and inference | Serialized model artifacts versioned with training hash and validation scores |
 
-| Data Type | Sensitivity / Classification | Storage & Handling | Retention & Lineage Policy |
-| :--- | :--- | :--- | :--- |
-| **Exoplanet Planetary Measurements** | Public Scientific Data | In-memory DataFrames, cached Parquet/CSV | Permanent catalog provenance; mapped to PHL catalog release versions |
-| **Stellar Host Observations** | Public Astronomical Data | In-memory NumPy matrices, normalized arrays | Retained with SIMBAD / Gaia DR3 cross-reference identifiers |
-| **Model Checkpoints & Weights** | Scientific Artifacts | Serialized Joblib/ONNX models | Versioned with training feature hash and cross-validation score tags |
-| **Imputation Transformation State** | Experimental Provenance | Serialized pipeline metadata | Immutable audit logs stored alongside benchmark evaluation metrics |
-
-### Open Science & Privacy Commitments
-- **Zero Sensitive Personal Data**: The repository processes celestial observations exclusively; no human subject or PII data is ingested or stored.
-- **Reproducible Data Lineage**: All dataset transforms adhere to strict random seed anchoring and version-controlled preprocessing pipelines.
-- **Open Benchmark Distribution**: Model outputs, confusion matrices, and ROC curves are formatted for open distribution and peer reproducibility.
-
----
-
-## 4. Operational Limitations & Failure Modes
-
-1. *Limitation:* Transit detection bias favors short-period, large-radius planets orbiting small stars, creating significant class imbalance.
-   *Mitigation:* The agent employs stratified k-fold cross-validation and balanced class weighting (e.g., SMOTE or cost-sensitive gradient boosting) to prevent majority-class collapse.
-
-2. *Limitation:* Host star activity (stellar flares, coronal mass ejections) in M-dwarf systems can strip planetary atmospheres, invalidating simple insolation-based classifications.
-   *Mitigation:* The agent flags planets around active M-dwarfs with a `StellarActivityUncertainty` warning, recommending follow-up spectroscopic characterization.
-
-3. *Limitation:* Incomplete observational records where both planetary mass and radius are missing simultaneously prevent accurate density calculations.
-   *Mitigation:* When both mass and radius are absent, the agent refuses to impute both simultaneously and designates the planet as `InsufficientData` rather than predicting blindly.
-
-4. *Limitation:* Data leakage caused by hidden correlations in engineered features mimicking forbidden proxy columns (`P_ESI`, `P_TEMP_EQUIL`).
-   *Mitigation:* An automated feature leakage detector computes Pearson and Spearman correlation matrices against forbidden proxies before training starts, aborting if correlation coefficients exceed $0.90$.
+Habitable Planet Hunter Agent complies with scientific integrity and open data standards:
+- **Zero Sensitive Personal Data:** Operates entirely on celestial astronomical observations; no human subject or personally identifiable information (PII) is collected or processed.
+- **FAIR Data Governance:** Preprocessing scripts, feature scalers, and data splits adhere to Findable, Accessible, Interoperable, and Reusable (FAIR) principles.
+- **Strict Anti-Leakage Protocol:** Direct proxies of habitability are permanently expunged before any feature transformation or model training occurs.
+- **Reproducible Lineage:** All dataset splits, imputation routines, and model training iterations are anchored to deterministic random seeds compatible with Python 3.10 runtime standards.
 
 ---
 
-## 5. Human Oversight, Reproducibility & Governance
+## 4. Known Limitations & Failure Modes
 
-- **Astronomical Peer Review Gate**: Planetary candidates classified as potentially habitable (Class 1 or Class 2) generate an automated astrophysical summary sheet for verification by planetary scientists.
-- **Feature Correlation Auditing**: Model feature importances (e.g., SHAP values) are logged and audited to confirm the model relies on foundational physics ($S_{\text{LUMINOSITY}}$, $P_{\text{SEMI\_MAJOR\_AXIS}}$) rather than catalog artifacts.
-- **Reproducibility Guarantee**: The execution pipeline adheres to Python 3.10 runtime standards compatible with Kaggle and Google Colab environments, ensuring 100% deterministic reproducibility across platforms.
+Reviewers, auditors, and users should note the following operational constraints:
+
+1. **Transit Detection Bias & Imbalanced Classes:**
+   - *Limitation:* Transit detection favors short-period, large-radius planets orbiting small stars, creating an extreme majority-class imbalance against rare habitable terrestrial candidates.
+   - *Mitigation:* The agent applies stratified k-fold cross-validation with synthetic minority oversampling (SMOTE) and cost-sensitive ensemble boosting to prevent majority-class collapse.
+
+2. **Active Stellar Environments & Flare Activity:**
+   - *Limitation:* Insolation flux calculations alone do not account for coronal mass ejections and high-energy flare radiation in active M-dwarf systems that can strip planetary atmospheres.
+   - *Mitigation:* The agent flags planets around M-dwarf host stars with an automated `StellarActivityUncertainty` warning, recommending follow-up transmission spectroscopy verification.
+
+3. **Dual Mass-Radius Observational Gaps:**
+   - *Limitation:* Incomplete catalog records where both planetary mass and radius are missing simultaneously prevent accurate bulk density and surface gravity computation.
+   - *Mitigation:* When both mass and radius are absent, the agent refuses to synthesize both parameters simultaneously and flags the record as `InsufficientData` rather than predicting blindly.
+
+4. **Latent Proxy Correlation & Feature Leakage:**
+   - *Limitation:* Unsupervised feature transformations or polynomial combinations could inadvertently reconstruct forbidden proxy indices (`P_ESI`, `P_TEMP_EQUIL`).
+   - *Mitigation:* An automated feature leakage detector computes Pearson and Spearman cross-correlations against forbidden proxies, halting the pipeline if correlation exceeds $0.85$.
+
+---
+
+## 5. Verification, Safety & Human Oversight
+
+- **Astronomical Peer Review Gate:** Planetary candidates classified as potentially habitable (Class 1 or Class 2) generate an automated astrophysical summary sheet for verification by planetary scientists.
+- **Human-in-the-Loop Governance:** The agent functions as an analytical decision-support copilot; astronomical discoveries and telescope observation time allocations remain subject to human verification.
+- **Deterministic Quality Gates:** Model feature importances (e.g., SHAP values) and mathematical flux limits are evaluated through deterministic physics routines rather than uncalibrated LLM generation.
+- **Kill Switch & Immutable Audit Logging:** The pipeline can be interrupted instantly via configuration flags; all data transformations, imputation seeds, and classification thresholds are recorded in structured audit logs.
