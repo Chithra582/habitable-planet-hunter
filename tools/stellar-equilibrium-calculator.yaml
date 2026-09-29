@@ -1,0 +1,17 @@
+name: "stellar-equilibrium-calculator"
+description: "Computes stellar insolation flux, habitable zone limits, and tidal locking distance from stellar and orbital parameters."
+input_schema:
+  type: "object"
+  properties:
+    stellar_luminosity:
+      type: "number"
+      description: "Luminosity of host star in Solar units (S_LUMINOSITY)."
+    semi_major_axis:
+      type: "number"
+      description: "Semi-major axis of orbit in Astronomical Units (P_SEMI_MAJOR_AXIS)."
+    eccentricity:
+      type: "number"
+      description: "Orbital eccentricity of the exoplanet (P_ECCENTRICITY)."
+  required:
+    - "stellar_luminosity"
+    - "semi_major_axis"

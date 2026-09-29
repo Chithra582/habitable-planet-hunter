@@ -1,0 +1,14 @@
+name: "habitability-inference-engine"
+description: "Generates calibrated habitability predictions and class probabilities for exoplanet feature vectors."
+input_schema:
+  type: "object"
+  properties:
+    feature_vector:
+      type: "object"
+      description: "Dictionary of physical and stellar feature values for candidate exoplanets."
+    classification_mode:
+      type: "string"
+      enum: ["multiclass", "binary"]
+      description: "Classification mode: multiclass (0, 1, 2) or binary (habitable vs non-habitable)."
+  required:
+    - "feature_vector"

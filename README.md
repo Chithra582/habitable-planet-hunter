@@ -1,5 +1,10 @@
 # Habitable Planet Hunter 🪐
 
+[![OpenGAP Spec 0.1.0](https://img.shields.io/badge/OpenGAP-0.1.0-blue.svg)](https://opengitagent.org)
+[![GitAgent Passport](https://img.shields.io/badge/GitAgent%20Passport-Ready-brightgreen.svg)](https://app.hidevs.xyz/passport/submit)
+[![Category](https://img.shields.io/badge/Category-Data%20%26%20Analytics-purple.svg)](https://app.hidevs.xyz/passport/submit)
+[![Compliance](https://img.shields.io/badge/Compliance-FAIR%20%7C%20Open%20Science-orange.svg)](EXPLAINABILITY.md)
+
 ## Dataset Overview
 This project utilizes the **PHL Exoplanet Catalog** to predict the potential habitability of exoplanets. The dataset contains various physical and orbital parameters for confirmed exoplanets and their host stars.
 
@@ -78,3 +83,15 @@ To ensure that all code submissions work seamlessly on cloud platforms like **Ka
 1.  **Python Version:** Use **Python 3.10** locally. This is the default version on Kaggle/Colab.
 2.  **Library Versions:** When installing libraries (Pandas, Scikit-Learn, etc.), ensure you are using the **latest versions compatible with Python 3.10**.
 3.  **Why?** If you use features from Python 3.12 that don't exist in 3.10, your code will fail during the evaluation phase.
+
+---
+
+## GitAgent Passport Qualification
+
+This repository is fully compliant with the **OpenGAP Spec 0.1.0** standard and qualified for the **HiDevs GitAgent Passport**:
+
+- **Checkpoint 1 (Validate):** Verified OpenGAP spec 0.1.0 compliance via [`agent.yaml`](agent.yaml), [`SOUL.md`](SOUL.md), [`skills/`](skills/), and [`tools/`](tools/).
+- **Checkpoint 2 (Explain):** Comprehensive 5-section transparency report in [`EXPLAINABILITY.md`](EXPLAINABILITY.md) detailing anti-leakage feature pool enforcement, physical insolation dynamics ($S_{\text{eff}} \propto L / d^2$), domain-aware spectral type imputation, and model failure mode mitigations.
+- **Checkpoint 3 (Export):** Cross-framework export compatibility tested across OpenAI SDK, CrewAI, Claude Code, and Lyzr.
+- **Target Category:** **`Data & Analytics`** (Astrophysical Machine Learning & Planetary Science).
+

@@ -1,0 +1,64 @@
+spec_version: "0.1.0"
+name: "habitable-planet-hunter-agent"
+version: "1.0.0"
+description: >
+  Autonomous exoplanet habitability classification engine, astrophysical feature validator,
+  and catalog imputation pipeline. Evaluates candidate exoplanets against planetary and stellar
+  physical dynamics without data leakage from synthetic habitability proxies.
+author: "Chithra R"
+license: "MIT"
+
+model:
+  preferred: "gemini-2.0-flash"
+  fallback:
+    - "gpt-4o"
+    - "claude-3-5-sonnet"
+  constraints:
+    temperature: 0.2
+    max_tokens: 4096
+
+skills:
+  - astrophysical-feature-validator
+  - stellar-flux-estimator
+  - habitability-classifier
+  - exoplanet-catalog-imputer
+
+tools:
+  - feature-leakage-detector
+  - stellar-equilibrium-calculator
+  - habitability-inference-engine
+  - missing-value-imputer
+
+runtime:
+  max_turns: 10
+  temperature: 0.2
+  timeout: 120
+
+compliance:
+  risk_tier: standard
+  frameworks:
+    - fair
+    - open-science
+  data_governance:
+    pii_handling: redact
+    data_classification: public
+  recordkeeping:
+    audit_logging: true
+    log_format: structured_json
+  supervision:
+    human_in_the_loop: conditional
+    override_capability: true
+    kill_switch: true
+
+tags:
+  - data-and-analytics
+  - astrophysics
+  - exoplanets
+  - machine-learning
+  - habitability-classification
+  - scientific-ai
+  - phl-catalog
+
+metadata:
+  domain: "astrophysics"
+  category: "Data & Analytics"

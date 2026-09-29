@@ -1,0 +1,15 @@
+name: "feature-leakage-detector"
+description: "Inspects incoming feature sets to detect and purge forbidden habitability proxies and unapproved columns."
+input_schema:
+  type: "object"
+  properties:
+    columns:
+      type: "array"
+      items:
+        type: "string"
+      description: "List of column names in the input dataset."
+    strict_pool_enforcement:
+      type: "boolean"
+      description: "Whether to reject any column outside the approved pool of 30 features."
+  required:
+    - "columns"

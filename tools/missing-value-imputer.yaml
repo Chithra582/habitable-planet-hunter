@@ -1,0 +1,17 @@
+name: "missing-value-imputer"
+description: "Applies physics-aware missing value imputation grouped by stellar spectral type and mass-radius relationships."
+input_schema:
+  type: "object"
+  properties:
+    dataset_records:
+      type: "array"
+      items:
+        type: "object"
+      description: "Array of exoplanet records with missing values."
+    imputation_strategy:
+      type: "string"
+      enum: ["spectral_median", "empirical_powerlaw", "mice_iterative"]
+      description: "Selected astronomical imputation strategy."
+  required:
+    - "dataset_records"
+    - "imputation_strategy"
